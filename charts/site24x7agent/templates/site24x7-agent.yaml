@@ -99,6 +99,14 @@ spec:
             value: {{ .Values.site24x7.device_key }}
           - name: installer
             value: kubernetes
+          {{- if .Values.site24x7.display_name }}
+          - name: CLUSTER_NAME
+            value: {{ .Values.site24x7.display_name }}
+          {{- end }}
+          {{- if .Values.site24x7.http_proxy }}
+          - name: http_proxy
+            value: {{ .Values.site24x7.http_proxy }}
+          {{- end }}
           #- name: CLUSTER_NAME
           #  value: TestCluster #Name of the kubernetes cluster
           #- name: http_proxy
