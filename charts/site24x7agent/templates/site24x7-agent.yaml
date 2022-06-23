@@ -99,10 +99,6 @@ spec:
             value: {{ .Values.site24x7.device_key }}
           - name: installer
             value: kubernetes
-          {{- if eq .Values.site24x7.display_name "helm" }}
-          - name: CLUSTER_NAME
-            value: "helm2"
-          {{- end }}
           {{- if .Values.site24x7.display_name }}
           - name: CLUSTER_NAME
             value: {{ .Values.site24x7.display_name }}
@@ -111,18 +107,18 @@ spec:
           - name: http_proxy
             value: {{ .Values.site24x7.http_proxy }}
           {{- end }}
-
-
-          #- name: CLUSTER_NAME
-          #  value: TestCluster #Name of the kubernetes cluster
-          #- name: http_proxy
-          #  value: http://192.168.1.1:3128
-          #- name: https_proxy
-          #  value: https://192.168.1.1:3128
-          #- name: API_SERVER_ENDPOINT_URL
-          #  value: https://172.15.10.1:6443
-          #- name: KUBE_STATE_METRICS_URL #http://<kube_state_metrics_pod_ip>:<kube_state_metrics_port>
-          #  value: https://10.43.10.12:8080 #Only HTTP request is accepted
+          {{- if .Values.site24x7.https_proxy }}
+          - name: https_proxy
+            value: {{ .Values.site24x7.https_proxy }}
+          {{- end }}
+          {{- if .Values.kubernetes.kube_state_metrics_url }}
+          - name: KUBE_STATE_METRICS_URL
+            value: {{ .Values.kubernetes.kube_state_metrics_url }}
+          {{- end }}
+          {{- if .Values.kubernetes.kube_api_server_endpoint_url }}
+          - name: API_SERVER_ENDPOINT_URL
+            value: {{ .Values.kubernetes.kube_api_server_endpoint_url }}
+          {{- end }}
         volumeMounts:
           - name: dockersocket
             mountPath: /var/run/docker.sock
