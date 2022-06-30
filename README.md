@@ -27,11 +27,6 @@ Your device Key is available under the Site24x7 "Add Server Monitor" page. Log I
 
 Site24x7 device key is unique for your account. Alternate device Key can also be generated from your Site24x7 account under Admin > Developer > Device Key.
 
-proxy: NONE
-
-Proxy server required to connect to the Site24x7 servers. Example : user:password@proxyhost:proxyport
-
-
 Installation Steps
 ==================
 	
@@ -42,6 +37,28 @@ Installation Steps
    For helm 2:
    	
    	helm install --name <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> site24x7/site24x7
+
+Optional Configuration Params
+=============================
+
+
+	The following table contains the configurable parameters of the Site24x7 Helm chart and their default values. Specify each parameter using the --set key=value argument to helm install. 
+	
+	For example, 
+	
+	#1) helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> --set site24x7.display_name="PROD_CLUSTER" site24x7/site24x7
+	
+	#2) helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> --set site24x7.http_proxy=http://<username>:<password>@<proxyhost>:<proxyport> site24x7/site24x7
+	
+	## Configuration Params	
+	
+	| Key | Type | Default | Description |
+	|-----|------|---------|-------------|
+	| site24x7.http_proxy | string | `""` | Sets agent to communicate via proxy |
+	| site24x7.https_proxy | string | `""` | Sets agent to communicate via proxy |
+	| site24x7.display_name | string | `""` | Sets the display name of your kubernetes cluster monitor |
+	| kubernetes.kube_state_metrics_url | string | `""` | Setting this will override the kube state metrics url discovered by agent |
+	| kubernetes.kube_api_server_endpoint_url | string | `""` |  Setting this will override the kubernetes api server url discovered by agent |
 
 
 Uninstalling the Chart
@@ -55,8 +72,10 @@ Uninstalling the Chart
 
 
 
+
 Related Links
 =====
 * [Site24x7 Server Monitoring] (https://www.site24x7.com/server-monitoring.html)
 * [Site24x7 Signup] (https://www.site24x7.com/signup.html?pack=5&l=en)
 * [Site24x7 Help Documentation] (https://www.site24x7.com/help/admin/adding-a-monitor/linux-server-monitoring.html)
+

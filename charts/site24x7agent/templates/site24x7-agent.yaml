@@ -59,6 +59,21 @@ rules:
   resources:
   - certificatesigningrequests
   verbs: ["list", "watch"]
+- apiGroups:  # Kubelet connectivity
+  - ""
+  resources:
+  - nodes/metrics
+  - nodes/stats
+  verbs:
+  - get
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
 ---
 apiVersion: {{ .Values.apiversion }}
 kind: ClusterRoleBinding
