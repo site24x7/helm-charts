@@ -42,6 +42,10 @@ rules:
   - replicasets
   - statefulsets
   verbs: ["list", "watch"]
+- apiGroups: ["events.k8s.io"]
+  resources:
+  - events
+  verbs: ["list","watch"]
 - apiGroups: ["batch"]
   resources:
   - cronjobs
@@ -64,6 +68,8 @@ rules:
   resources:
   - nodes/metrics
   - nodes/stats
+  - nodes/metrics/cadvisor
+  - nodes/proxy
   verbs:
   - get
 - apiGroups:
@@ -105,6 +111,8 @@ spec:
       name: site24x7-agent
     spec:
       serviceAccountName: site24x7
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       containers:
       - image: {{ .Values.registry }}
         imagePullPolicy: Always
