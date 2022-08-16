@@ -32,11 +32,11 @@ Installation Steps
 	
    For Helm 3:
    	
-   	helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> site24x7/site24x7
+   	helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> site24x7/site24x7agent
    	
    For helm 2:
    	
-   	helm install --name <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> site24x7/site24x7
+   	helm install --name <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> site24x7/site24x7agent
 
 Optional Configuration Params
 =============================
@@ -46,9 +46,9 @@ Optional Configuration Params
 	
 	For example, 
 	
-	#1) helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> --set site24x7.display_name="PROD_CLUSTER" site24x7/site24x7
+	#1) helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> --set site24x7.display_name="PROD_CLUSTER" site24x7/site24x7agent
 	
-	#2) helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> --set site24x7.http_proxy=http://<username>:<password>@<proxyhost>:<proxyport> site24x7/site24x7
+	#2) helm install <RELEASE_NAME> --set site24x7.device_key=<SITE24x7_DEVICE_KEY> --set site24x7.http_proxy=http://<username>:<password>@<proxyhost>:<proxyport> site24x7/site24x7agent
 	
 	## Configuration Params	
 	
@@ -66,7 +66,7 @@ Uninstalling the Chart
 
    To uninstall/delete the <RELEASE_NAME> deployment:
    
-   	helm delete <RELEASE_NAME> --purge
+   	helm delete <RELEASE_NAME>
 
    The above command removes all the Kubernetes components associated with the chart and deletes the release.
 
