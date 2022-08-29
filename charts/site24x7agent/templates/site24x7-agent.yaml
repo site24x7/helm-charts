@@ -112,7 +112,7 @@ spec:
     spec:
       serviceAccountName: site24x7
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       containers:
       - image: {{ .Values.registry }}
         imagePullPolicy: Always
