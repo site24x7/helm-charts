@@ -121,6 +121,12 @@ spec:
           - name: KEY
             value: {{ .Values.site24x7.device_key }}
           - name: installer
+            value: helm-kubernetes
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                 fieldPath: status.hostIP
+          - name: installer
             value: kubernetes
           {{- if .Values.site24x7.display_name }}
           - name: CLUSTER_NAME
