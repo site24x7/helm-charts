@@ -9,3 +9,4 @@ site24x7:
 kubernetes:
   kube_state_metrics_url: ""
   kube_api_server_endpoint_url: ""
+  namespace: default

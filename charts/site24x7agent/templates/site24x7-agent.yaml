@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: site24x7
-  namespace: default
+  namespace: {{ .Values.kubernetes.namespace }}
 automountServiceAccountToken: true
 ---
 apiVersion: {{ .Values.apiversion }}
@@ -92,7 +92,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: site24x7
-  namespace: default
+  namespace: {{ .Values.kubernetes.namespace }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
