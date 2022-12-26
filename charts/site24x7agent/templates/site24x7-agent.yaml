@@ -98,6 +98,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: site24x7-agent
+  namespace: {{ .Values.kubernetes.namespace }}
 spec:
   selector:
     matchLabels:
