@@ -59,6 +59,13 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           timeoutSeconds: 5
+      nodeSelector:
+        kubernetes.io/os: linux
+      {{- with .Values.nodeSelector}}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+
 ---
     
 apiVersion: {{ .Values.apiversion }}
