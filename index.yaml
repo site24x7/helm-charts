@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   site24x7agent:
   - apiVersion: v2
+    appVersion: 19.3.0
+    created: "2023-11-22T10:46:17.497810926Z"
+    description: A Helm chart for Installing Kubernetes Agent
+    digest: c1dce565be74a3b6606417758fb23a61c4fde63fc217bdb31e61404df4107e39
+    name: site24x7agent
+    urls:
+    - https://github.com/site24x7/helm-charts/releases/download/site24x7agent-1.5.0/site24x7agent-1.5.0.tgz
+    version: 1.5.0
+  - apiVersion: v2
     appVersion: 18.8.0
     created: "2022-12-26T17:22:37.949960818Z"
     description: A Helm chart for Installing Kubernetes Agent
