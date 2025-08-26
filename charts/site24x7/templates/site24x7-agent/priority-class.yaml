@@ -1,0 +1,7 @@
+{{- if and .Values.site24x7Agent.create .Values.site24x7Agent.applyPriorityClass }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ include "site24x7Agent.name" . }}
+value: {{ .Values.site24x7Agent.priorityClassValue }}
+{{- end }}

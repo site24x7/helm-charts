@@ -1,0 +1,117 @@
+{{- if .Values.site24x7Agent.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "site24x7.serviceAccountName" . }}
+  labels:
+    {{- include "site24x7Agent.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources:
+  - configmaps
+  - nodes
+  - pods
+  - services
+  - resourcequotas
+  - replicationcontrollers
+  - limitranges
+  - persistentvolumeclaims
+  - persistentvolumes
+  - namespaces
+  - endpoints
+  - componentstatuses
+  - events
+  verbs: ["list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  resourceNames:
+  - site24x7
+  verbs: ["list", "watch", "get", "patch"]
+- apiGroups: ["extensions"]
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  - ingresses
+  verbs: ["list", "watch"]
+- apiGroups: ["apps"]
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  - statefulsets
+  verbs: ["list", "watch"]
+- apiGroups: ["events.k8s.io"]
+  resources:
+  - events
+  verbs: ["list","watch"]
+- apiGroups: ["batch"]
+  resources:
+  - cronjobs
+  - jobs
+  verbs: ["list", "watch"]
+- apiGroups: ["autoscaling"]
+  resources:
+  - horizontalpodautoscalers
+  verbs: ["list", "watch"]
+- apiGroups: ["policy"]
+  resources:
+  - poddisruptionbudgets
+  verbs: ["list", "watch"]
+- apiGroups: ["certificates.k8s.io"]
+  resources:
+  - certificatesigningrequests
+  verbs: ["list", "watch"]
+- apiGroups:
+  - ""
+  resources:
+  - nodes/metrics
+  - nodes/stats
+  - nodes/metrics/cadvisor
+  - nodes/proxy
+  verbs:
+  - get
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- nonResourceURLs:
+  - /metrics
+  - /healthz
+  - /livez
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "site24x7.fullname" . }}
+  labels:
+    {{- include "site24x7Agent.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "site24x7.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "site24x7.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+---
+{{- if .Values.serviceAccount.create -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "site24x7.serviceAccountName" . }}
+  labels:
+    {{- include "site24x7Agent.labels" . | nindent 4 }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

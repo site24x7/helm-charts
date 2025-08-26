@@ -1,0 +1,7 @@
+{{- if .Values.site24x7KubeStateMetrics.applyPriorityClass }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ include "site24x7KubeStateMetrics.name" . }}
+value: {{ .Values.site24x7KubeStateMetrics.priorityClassValue }}
+{{- end }}

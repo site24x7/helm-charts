@@ -1,0 +1,156 @@
+{{- if .Values.site24x7Agent.create }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "site24x7Agent.name" . }}
+  labels:
+    {{- include "site24x7Agent.labels" . | nindent 4 }}
+  {{- if .Values.site24x7Agent.annotations }}
+  annotations:
+    {{- toYaml .Values.site24x7Agent.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "site24x7.selectorLabels" . | nindent 6 }}
+  updateStrategy:
+    {{- if not (empty .Values.site24x7Agent.updateStrategy) }}
+    {{- toYaml .Values.site24x7Agent.updateStrategy | nindent 4 }}
+    {{- else }}
+    type: RollingUpdate
+    {{- end }}
+  template:
+    metadata:
+      labels:      
+        {{- include "site24x7Agent.labels" . | nindent 8 }}
+      name: {{ include "site24x7Agent.name" . }}
+      {{- if .Values.site24x7Agent.annotations }}
+      annotations:
+        {{- toYaml .Values.site24x7Agent.annotations | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "site24x7.fullname" . }}          
+      nodeSelector:
+        {{- if not (empty .Values.site24x7Agent.nodeSelector) }}
+        {{- .Values.site24x7Agent.nodeSelector }}
+        {{- else }}
+        kubernetes.io/os: linux
+        {{- end }}
+      tolerations:
+      {{- if .Values.site24x7Agent.tolerations }}
+        {{- toYaml .Values.site24x7Agent.tolerations | nindent 8 }}
+      {{- else if .Values.site24x7Agent.applyDefaultToleration }}
+        - operator: Exists
+      {{- end }}
+      {{- if .Values.site24x7Agent.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml .Values.site24x7Agent.image.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      {{- if .Values.site24x7Agent.applyPriorityClass }}
+      priorityClassName: {{ include "site24x7Agent.name" . }}
+      {{- end }}
+      containers:
+      {{- with .Values.site24x7Agent.image }}
+      - image: {{ .repository | default "site24x7" }}/{{ .name | default "docker-agent" }}:{{ .tag }}
+        imagePullPolicy: {{ .pullPolicy }}
+      {{- end }}
+        name: {{ include "site24x7Agent.name" . }}
+        securityContext:
+        {{- include "site24x7Agent.securityContext" . | indent 10 }}
+        {{- if .Values.site24x7Agent.resources }}
+        resources:
+        {{- toYaml .Values.site24x7Agent.resources | nindent 10 }}
+        {{- end }}
+        env:
+          - name: KEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ include "site24x7Agent.name" . }}"
+                key: KEY
+          - name: installer
+            value: {{ .Values.site24x7Agent.installerName | default "kubernetes" }}
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          {{- if and .Values.site24x7Agent.applyNonRootSecurityContext .Values.openShift }}
+          - name: SERVERLESS
+            value: true
+          {{- end }}
+          {{- if .Values.gkeAutoPilot }}
+          - name: GKE_AUTOPILOT
+            value: "true"
+          {{- end }}
+          {{- if .Values.clusterName }}
+          - name: CLUSTER_NAME
+            value: {{ .Values.clusterName }}
+          {{- end }}
+          {{- if and .Values.http_proxy .Values.https_proxy }}
+          - name: http_proxy
+            value: {{ .Values.http_proxy }}
+          - name: https_proxy
+            value: {{ .Values.https_proxy }}
+          {{- end }}
+          {{- if .Values.site24x7Agent.extraEnv }}
+          {{- toYaml .Values.site24x7Agent.extraEnv | nindent 10 }}
+          {{- end }}
+        volumeMounts:
+          {{- if .Values.site24x7ConfigMap.create }}
+          - name: clusterconfig
+            mountPath: /etc/{{ include "site24x7.fullname" . }}/clusterconfig
+            readOnly: true
+          {{- end }}
+          {{- if .Values.site24x7Agent.applyNonRootSecurityContext }}
+          - name: {{ include "site24x7Agent.name" . }}
+            mountPath: /opt/{{ include "site24x7.fullname" . }}/
+          {{- end }}
+          {{- if not (or (and .Values.site24x7Agent.applyNonRootSecurityContext .Values.openShift) .Values.gkeAutoPilot) }}
+          - name: procfs
+            mountPath: /host/proc
+            readOnly: true
+          - name: sysfs
+            mountPath: /host/sys/
+            readOnly: true
+          - name: varfs
+            mountPath: /host/var/
+            readOnly: true
+          - name: etcfs
+            mountPath: /host/etc/
+            readOnly: true
+          {{- end }}
+      volumes:
+        {{- if .Values.site24x7ConfigMap.create }}
+        - configMap:
+            name: {{ include "site24x7.fullname" . }}
+            optional: true
+          name: clusterconfig
+        {{- end }}
+        {{- if .Values.site24x7Agent.applyNonRootSecurityContext }}
+        - emptyDir: {}
+          name: {{ include "site24x7Agent.name" . }}
+        {{- end }}
+      {{- with .Values }}
+        {{- if not (or (and .site24x7Agent.applyNonRootSecurityContext .openShift) .gkeAutoPilot) }}
+        - hostPath:
+            path: /proc
+          name: procfs
+        - hostPath:
+            path: /sys/
+          name: sysfs
+        - hostPath:
+            path: /var/
+          name: varfs
+        - hostPath:
+            path: /etc/
+          name: etcfs
+        {{- end }}
+      {{- end }}
+{{- end }}

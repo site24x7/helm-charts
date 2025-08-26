@@ -1,0 +1,15 @@
+{{- if .Values.site24x7ConfigMap.create }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "site24x7.fullname" . }}
+  labels:
+    {{- include "site24x7.labels" . | nindent 4 }}
+data:
+  NODE_AGENT_VERSION: "{{ .Values.site24x7ConfigMap.nodeAgentVersion }}"
+  CLUSTER_AGENT_VERSION: "{{ .Values.site24x7ConfigMap.clusterAgentVersion }}"
+  SETTINGS: |
+    {{- .Values.site24x7ConfigMap.settings | toJson | nindent 4 }}
+  1MIN: |
+    {{- .Values.site24x7ConfigMap.oneMin | toJson | nindent 4 }}
+{{ end }}

@@ -1,0 +1,121 @@
+{{- if .Values.site24x7ClusterAgent.create }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "site24x7ClusterAgent.name" . }}
+  labels:
+    {{- include "site24x7ClusterAgent.labels" . | nindent 4 }}
+  {{- if .Values.site24x7ClusterAgent.annotations }}
+  annotations:
+    {{- toYaml .Values.site24x7ClusterAgent.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.site24x7ClusterAgent.replicas | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "site24x7.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "site24x7ClusterAgent.labels" . | nindent 8 }}
+        app: {{ include "site24x7ClusterAgent.name" . }}
+      name: {{ include "site24x7ClusterAgent.name" . }}
+      {{- if .Values.site24x7ClusterAgent.annotations }}
+      annotations:
+        {{- toYaml .Values.site24x7ClusterAgent.annotations | nindent 8 }}
+      {{- end }}
+    spec:
+      nodeSelector:
+        {{- if not (empty .Values.site24x7ClusterAgent.nodeSelector) }}
+        {{- toYaml .Values.site24x7ClusterAgent.nodeSelector | nindent 8 }}
+        {{- else }}
+        kubernetes.io/os: linux
+        {{- end }}
+      serviceAccountName: {{ include "site24x7.fullname" . }}
+      {{- if .Values.site24x7ClusterAgent.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.site24x7ClusterAgent.image.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      tolerations:
+      {{- if .Values.site24x7ClusterAgent.tolerations }}
+        {{- toYaml .Values.site24x7ClusterAgent.tolerations | nindent 8 }}
+      {{- else if .Values.site24x7ClusterAgent.applyDefaultToleration }}
+        - operator: Exists
+      {{- end }}
+      {{- if .Values.site24x7ClusterAgent.applyPriorityClass }}
+      priorityClassName: {{ include "site24x7ClusterAgent.name" . }}
+      {{- end }}
+      containers:
+      {{- with .Values.site24x7ClusterAgent.image }}
+      - image: {{ .repository | default "site24x7" }}/{{ .name | default "docker-agent" }}:{{ .tag | default "cluster_agent_nonroot" }}
+        imagePullPolicy: {{ .pullPolicy }}
+      {{- end }}
+        name: {{ include "site24x7ClusterAgent.name" . }}
+        env:
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                  fieldPath: status.hostIP
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: CLUSTER_AGENT
+            value: "true"
+          {{- if and .Values.http_proxy .Values.https_proxy }}
+          - name: http_proxy
+            value: {{ .Values.http_proxy }}
+          - name: https_proxy
+            value: {{ .Values.https_proxy }}
+          {{- end }}
+          {{- if .Values.site24x7ClusterAgent.extraEnv }}
+          {{- toYaml .Values.site24x7ClusterAgent.extraEnv | nindent 10 }}
+          {{- end }}
+        ports:
+          - containerPort: 5000
+            name: http-metrics
+            protocol: TCP
+        securityContext:
+          {{- include "site24x7.nonRootScc" . | indent 10 }}
+        volumeMounts:
+          - name: {{ include "site24x7ClusterAgent.name" . }}
+            mountPath: /home/{{ include "site24x7.fullname" . }}/monagent
+          - name: clusterconfig
+            mountPath: /etc/{{ include "site24x7.fullname" . }}/clusterconfig
+            readOnly: true
+        {{- if .Values.site24x7ClusterAgent.resources }}
+        resources:
+        {{- toYaml .Values.site24x7ClusterAgent.resources | nindent 10 }}
+        {{- end }}
+        livenessProbe:
+        {{- if .Values.site24x7ClusterAgent.livenessProbe }}
+          {{- toYaml .Values.site24x7ClusterAgent.livenessProbe | nindent 10 }}
+        {{- else }}
+          httpGet:
+            path: /ca/health_check
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          failureThreshold: 5
+          timeoutSeconds: 15
+        {{- end }}
+        readinessProbe:
+        {{- if .Values.site24x7ClusterAgent.readinessProbe }}
+          {{- toYaml .Values.site24x7ClusterAgent.readinessProbe | nindent 10 }}
+        {{- else }}
+          httpGet:
+            path: /ca/health_check
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          failureThreshold: 5
+          timeoutSeconds: 10
+        {{- end }}
+      volumes:
+      - configMap:
+          name: {{ include "site24x7.fullname" . }}
+          optional: true
+        name: clusterconfig
+      - emptyDir: {}
+        name: {{ include "site24x7ClusterAgent.name" . }}
+{{ end }}

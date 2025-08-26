@@ -1,0 +1,262 @@
+# Default values for site24x7-agent.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# nameOverride - names used for site24x7 resources
+nameOverride: "site24x7"
+fullnameOverride: "site24x7"
+
+# deviceKey - site24x7 device key
+deviceKey: "apiKey"
+
+# clusterName - name of the cluster to be monitored
+clusterName: ""
+
+# Cluster distributions
+openShift: false
+gkeAutoPilot: false
+
+# proxy settings for site24x7-agent & site24x7-cluster-agent
+http_proxy: ""
+https_proxy: ""
+
+site24x7Agent:
+  # site24x7Agent.create - enable/disable the site24x7-agent resources
+  create: true
+
+  # site24x7Agent.annotations - for site24x7-agent daemonset and its pod annotations
+  annotations: {}
+
+  # site24x7Agent.updateStrategy - for site24x7-agent daemonset and its pods
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+
+  # site24x7Agent.nodeSelector - for site24x7-agent daemonset pods
+  nodeSelector: {}
+
+  # site24x7Agent.tolerations - list of tolerations to add to the daemonset pods
+  tolerations: []
+
+  # site24x7Agent.securityContext to be applied to the daemonset containers
+  securityContext: {}
+
+  # site24x7Agent.applyNonRootSecurityContext - if not securityContext is provided, the appropriate context to be added to the daemonset containers based runAsNonRoot: true/false
+  applyNonRootSecurityContext: false
+
+  # site24x7Agent.applyDefaultToleration - applying toleration which tolerates any taints
+  applyDefaultToleration: true
+
+  # site24x7Agent.image - daemonset container details
+  image:
+    repository: site24x7
+    name: docker-agent
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: release2004
+    imagePullSecrets: []
+
+  # site24x7Agent.resources - site24x7-agent daemonset container resources
+  resources:
+    limits:
+      memory: 1Gi
+
+  # site24x7Agent.installerName - installer name to be used in the site24x7-agent pod's environment variable
+  installerName: "kubernetes"
+
+  # site24x7Agent.extraEnv - to be added to the site24x7-agent pod container
+  extraEnv: []
+
+  # site24x7Agent.applyPriorityClass - apply the site24x7-agent priorityClass to the daemonset pods
+  applyPriorityClass: true
+
+  # site24x7Agent.priorityClassValue - site24x7-agent priorityClass value
+  priorityClassValue: 12000000
+  
+
+site24x7KubeStateMetrics:
+  # site24x7KubeStateMetrics.create - enable/disable
+  create: true
+
+  # site24x7KubeStateMetrics.annotations - deployment and pod annotations
+  annotations: {}
+
+  # site24x7KubeStateMetrics.updateStrategy - for site24x7-kube-state-metrics deployment (default - rollingUpdate)
+  updateStrategy: {}
+
+  # site24x7KubeStateMetrics.nodeSelector - for site24x7-kube-state-metrics deployment pods
+  nodeSelector: {}
+
+  # site24x7KubeStateMetrics.tolerations - list of tolerations to add to the deployment pods
+  tolerations: []
+
+  # site24x7KubeStateMetrics.securityContext - to be applied to the deployment contaiers
+  securityContext: {}
+
+  # site24x7KubeStateMetrics.replicas - count of site24x7-kube-state-metrics deployment
+  replicas: 1
+
+  # site24x7KubeStateMetrics.applyDefaultToleration - applying toleration which tolerates any taints
+  applyDefaultToleration: true
+
+  # site24x7KubeStateMetrics.image - deployment container details
+  image:
+    repository: registry.k8s.io
+    name: kube-state-metrics/kube-state-metrics
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: v2.9.2
+    imagePullSecrets: []
+  
+  # site24x7KubeStateMetrics.resources - container resources
+  resources:
+    requests:
+      cpu: 10m
+      memory: 100Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  
+  # site24x7KubeStateMetrics.applyPriorityClass - apply the site24x7-kube-state-metrics priorityClass to the daemonset pods
+  applyPriorityClass: true
+
+  # site24x7KubeStateMetrics.priorityClassValue - site24x7-kube-state-metrics priorityClass value
+  priorityClassValue: 12000000
+  
+
+site24x7ClusterAgent:
+  # site24x7ClusterAgent.create - enable/disable
+  create: false
+
+  # site24x7ClusterAgent.replicas - no. of replicas for site24x7-cluster-agent deployment
+  replicas: 1
+
+  # site24x7ClusterAgent.annotations - deployment and pod annotations
+  annotations: {}
+
+  # site24x7ClusterAgent.updateStrategy - site24x7-cluster-agent for deployment
+  updateStrategy: {}
+
+  # site24x7ClusterAgent.nodeSelector - site24x7-cluster-agent for deployment pods
+  nodeSelector: {}
+  
+  # site24x7ClusterAgent.tolerations - list of tolerations to add to the deployment pods
+  tolerations: []
+
+  # site24x7ClusterAgent.securityContext - to be applied to the deployment contaiers
+  securityContext: {}
+
+  # site24x7ClusterAgent.applyDefaultToleration - applying toleration which tolerates any taints
+  applyDefaultToleration: false
+
+  # site24x7ClusterAgent.image - site24x7-cluster-agent deployment container details
+  image:
+    repository: site24x7
+    name: docker-agent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: cluster_agent_nonroot
+    pullPolicy: IfNotPresent
+    imagePullSecrets: []
+  
+  # site24x7ClusterAgent.resources - container resources
+  resources:
+    limits:
+      cpu: 600m
+      memory: 1Gi
+  
+  # site24x7ClusterAgent.extraEnv to be added to the site24x7-agent container
+  extraEnv: []
+
+  # site24x7ClusterAgent.applyPriorityClass - apply the site24x7-cluster-agent priorityClass to the daemonset pods
+  applyPriorityClass: true
+
+  # site24x7ClusterAgent.priorityClassValue - site24x7-cluster-agent priorityClass value
+  priorityClassValue: 12000000
+
+  # site24x7ClusterAgent.livenessProbe - liveness probe for site24x7-cluster-agent deployment
+  livenessProbe: {}
+
+  # site24x7ClusterAgent.readinessProbe - readiness probe for site24x7-cluster-agent deployment
+  readinessProbe: {}
+
+
+# serviceAccount - service account details used by site24x7-agent & site24x7-cluster-agent
+serviceAccount:
+  # serviceAccount.create - enable/disable
+  create: true
+  # serviceAccount.annotations - to add to the service account
+  annotations: {}
+  # serviceAccount.name - The name of the service account to use.
+  name: site24x7
+
+
+# site24x7 configMap used to store the settings for agents
+site24x7ConfigMap:
+  # site24x7ConfigMap.create - enable/disable
+  create: true
+
+  # site24x7ConfigMap.nodeAgentVersion - To change the Linux agent version for site24x7-agent pods
+  nodeAgentVersion: "2000"
+
+  # site24x7ConfigMap.clusterAgentVersion - To change the Cluster agent version for site24x7-cluster-agent pods
+  clusterAgentVersion: "100"
+
+  # site24x7ConfigMap.oneMin - To change the instant discovery settings for site24x7-agent & site24x7-cluster-agent pods
+  oneMin: 
+    Pods: "90"
+    Nodes: "90"
+    Namespaces: "90"
+    HorizontalPodAutoscalers: "-1"
+    DaemonSets: "90"
+    Deployments: "60"
+    Endpoints: "-1"
+    ReplicaSets: "-1"
+    StatefulSets: "90"
+    Services: "-1"
+    PV: "-1"
+    PersistentVolumeClaims: "-1"
+    Jobs: "-1"
+    Ingresses: "-1"
+
+  # site24x7ConfigMap.settings - To change the DataCollector tasks settings for site24x7-agent & site24x7-cluster-agent pods
+  settings:
+    kubernetes: "300"
+    daemonsets: "300"
+    deployments: "300"
+    statefulsets: "300"
+    pods: "300"
+    nodes: "300"
+    services: "300"
+    replicasets: "900"
+    ingresses: "300"
+    jobs: "300"
+    pv: "300"
+    persistentvolumeclaim: "300"
+    componentstatuses: "300"
+    horizontalpodautoscalers: "300"
+    endpoints: "3600"
+    namespaces: "300"
+    eventcollector: "60"
+    npcdatacollector: "300"
+    npcdatacollector_discovery: "900"
+    resourcedependency: "300"
+    workloadsdatacollector: "300"
+    workloadsdatacollector_discovery: "900"
+    clustermetricsaggregator: "300"
+    sidecarnpccollector: "300"
+    sidecarnpccollector_discovery: "900"
+    dcinit: "900"
+    clusteragent: "1"
+    ksm: "1"
+    guidancemetrics: "20600"
+    termination: "900"
+    kubelet: "300"
+    metadata: "20600"
+    prometheus_integration: "1"
+    plugin_integration: "1"
+    database_integration: "1"
+    ksmprocessor: "1"
+    kubeletdatapersistence: "1"
+    servicerelationdataprocessor: "1"
+    yamlfetcher: "60"

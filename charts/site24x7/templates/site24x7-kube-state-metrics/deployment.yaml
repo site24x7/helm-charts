@@ -1,0 +1,78 @@
+{{- if .Values.site24x7KubeStateMetrics.create }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "site24x7KubeStateMetrics.labels" . | nindent 4 }}
+  name: {{ include "site24x7KubeStateMetrics.name" . }}
+  {{- if .Values.site24x7KubeStateMetrics.annotations }}
+  annotations:
+    {{- toYaml .Values.site24x7KubeStateMetrics.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.site24x7KubeStateMetrics.replicas }}
+  selector:
+    matchLabels:
+      {{- include "site24x7.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "site24x7KubeStateMetrics.labels" . | nindent 8 }}
+        app: {{ include "site24x7KubeStateMetrics.name" . }}
+      name: {{ include "site24x7KubeStateMetrics.name" . }}
+      {{- if .Values.site24x7KubeStateMetrics.annotations }}
+      annotations:
+        {{- toYaml .Values.site24x7KubeStateMetrics.annotations | nindent 8 }}
+      {{- end }}
+    spec:
+      tolerations:
+      {{- if .Values.site24x7KubeStateMetrics.tolerations }}
+        {{- toYaml .Values.site24x7KubeStateMetrics.tolerations | nindent 8 }}
+      {{- else if .Values.site24x7KubeStateMetrics.applyDefaultToleration }}
+        - operator: Exists
+      {{- end }}
+      automountServiceAccountToken: true
+      {{- if .Values.site24x7KubeStateMetrics.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.site24x7KubeStateMetrics.image.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      {{- if .Values.site24x7KubeStateMetrics.applyPriorityClass }}
+      priorityClassName: {{ include "site24x7KubeStateMetrics.name" . }}
+      {{- end }}
+      containers:
+      {{- with .Values.site24x7KubeStateMetrics.image }}
+      - image: {{ .repository | default "registry.k8s.io" }}/{{ .name | default "kube-state-metrics/kube-state-metrics" }}:{{ .tag }}
+        imagePullPolicy: {{ .pullPolicy }}
+      {{- end }}
+        name: {{ include "site24x7KubeStateMetrics.name" . }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8081
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 8080
+          name: http-metrics
+        - containerPort: 8081
+          name: telemetry
+        {{- if .Values.site24x7KubeStateMetrics.resources }}
+        resources:
+        {{- toYaml .Values.site24x7KubeStateMetrics.resources | nindent 10 }}
+        {{- end }}
+        securityContext:
+          {{- include "site24x7KubeStateMetrics.securityContext" . | indent 10 }}
+      nodeSelector:
+        {{- if not (empty .Values.site24x7KubeStateMetrics.nodeSelector) }}
+        {{- toYaml .Values.site24x7KubeStateMetrics.nodeSelector | nindent 8 }}
+        {{- else }}
+        kubernetes.io/os: linux
+        {{- end }}
+      serviceAccountName: {{ include "site24x7KubeStateMetrics.name" . }}
+{{- end }}

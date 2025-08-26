@@ -1,0 +1,16 @@
+{{- if .Values.site24x7ClusterAgent.create }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "site24x7ClusterAgent.name" . }}
+  labels:
+    {{- include "site24x7ClusterAgent.labels" . | nindent 4 }}
+    name: site24x7-cluster-agent
+spec:
+  ports:
+  - name: http-metrics
+    port: 5000
+    protocol: TCP
+  selector:
+    app.kubernetes.io/instance: {{ include "site24x7ClusterAgent.name" . }}
+{{ end }}

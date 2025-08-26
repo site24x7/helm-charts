@@ -1,0 +1,7 @@
+{{- if .Values.site24x7ClusterAgent.applyPriorityClass }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ include "site24x7ClusterAgent.name" . }}
+value: {{ .Values.site24x7ClusterAgent.priorityClassValue }}
+{{- end }}

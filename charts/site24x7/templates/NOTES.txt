@@ -1,0 +1,3 @@
+Thank you for installing {{ .Chart.Name }}.
+
+The Site24x7 Agent was installed in namespace: {{ .Release.Namespace }}
