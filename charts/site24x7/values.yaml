@@ -9,6 +9,12 @@ fullnameOverride: "site24x7"
 # deviceKey - site24x7 device key
 deviceKey: "apiKey"
 
+# existingSecret - provide the site24x7 deviceKey secret details if already exists
+existingSecret:
+  enabled: false
+  name: ""
+  key: "KEY"
+
 # clusterName - name of the cluster to be monitored
 clusterName: ""
 
@@ -54,7 +60,7 @@ site24x7Agent:
     name: docker-agent
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: release2004
+    tag: release22000
     imagePullSecrets: []
 
   # site24x7Agent.resources - site24x7-agent daemonset container resources
@@ -197,10 +203,10 @@ site24x7ConfigMap:
   create: true
 
   # site24x7ConfigMap.nodeAgentVersion - To change the Linux agent version for site24x7-agent pods
-  nodeAgentVersion: "2000"
+  nodeAgentVersion: "22000"
 
   # site24x7ConfigMap.clusterAgentVersion - To change the Cluster agent version for site24x7-cluster-agent pods
-  clusterAgentVersion: "100"
+  clusterAgentVersion: "102"
 
   # site24x7ConfigMap.oneMin - To change the instant discovery settings for site24x7-agent & site24x7-cluster-agent pods
   oneMin: 
