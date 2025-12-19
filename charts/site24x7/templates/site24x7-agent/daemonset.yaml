@@ -65,8 +65,13 @@ spec:
           - name: KEY
             valueFrom:
               secretKeyRef:
+              {{- if .Values.existingSecret.enabled }}
+                name: {{ .Values.existingSecret.name | quote }}
+                key: {{ .Values.existingSecret.key | default "KEY" }}
+              {{- else }}
                 name: "{{ include "site24x7Agent.name" . }}"
                 key: KEY
+              {{- end }}
           - name: installer
             value: {{ .Values.site24x7Agent.installerName | default "kubernetes" }}
           - name: NODE_IP
