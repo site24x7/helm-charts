@@ -86,6 +86,10 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           {{- if and .Values.site24x7Agent.applyNonRootSecurityContext .Values.openShift }}
           - name: SERVERLESS
             value: true
