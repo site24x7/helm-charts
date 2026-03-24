@@ -64,8 +64,8 @@ site24x7Agent:
 
   # site24x7Agent.image - daemonset container details
   image:
-    repository: bharathveerakumar
-    name: site24x7-agent
+    repository: site24x7
+    name: docker-agent
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
     tag: release22100
