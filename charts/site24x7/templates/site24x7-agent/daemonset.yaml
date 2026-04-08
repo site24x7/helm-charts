@@ -140,6 +140,11 @@ spec:
         - configMap:
             name: {{ include "site24x7.fullname" . }}
             optional: true
+            items:
+            - key: SETTINGS
+              path: SETTINGS
+            - key: 1MIN
+              path: 1MIN
           name: clusterconfig
         {{- end }}
         {{- if .Values.site24x7Agent.applyNonRootSecurityContext }}
