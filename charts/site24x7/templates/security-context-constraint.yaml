@@ -15,6 +15,9 @@ fsGroup:
 kind: SecurityContextConstraints
 metadata:
   name: {{ include "site24x7.fullname" . }}
+  annotations:
+    # This tells Helm to run this BEFORE the rest of the chart
+    "helm.sh/hook": pre-install,pre-upgrade
 priority: null
 readOnlyRootFilesystem: false
 seccompProfiles:
@@ -32,7 +35,8 @@ seLinuxContext:
 supplementalGroups:
   type: RunAsAny
 users:
-- system:serviceaccount:{{ include "site24x7.serviceAccountName" }}:{{ .Release.Namespace }}
+- system:serviceaccount:{{ .Release.Namespace }}:{{ include "site24x7.serviceAccountName" . }}
+- system:serviceaccount:{{ .Release.Namespace }}:{{ include "site24x7KubeStateMetrics.name" . }}
 volumes:
 - configMap
 - csi
