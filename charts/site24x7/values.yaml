@@ -73,6 +73,8 @@ site24x7Agent:
 
   # site24x7Agent.resources - site24x7-agent daemonset container resources
   resources:
+    requests:
+      memory: 100Mi
     limits:
       memory: 1Gi
 
