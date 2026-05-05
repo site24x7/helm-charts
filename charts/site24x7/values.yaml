@@ -16,7 +16,7 @@ existingSecret:
   key: "KEY"
 
 # managementAction - enable IT Automation ClusterRole rules
-managementAction: true
+managementAction: false
 
 # clusterName - name of the cluster to be monitored
 clusterName: ""
