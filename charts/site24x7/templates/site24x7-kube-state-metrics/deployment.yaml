@@ -47,13 +47,13 @@ spec:
         name: {{ include "site24x7KubeStateMetrics.name" . }}
         livenessProbe:
           httpGet:
-            path: /healthz
+            path: /livez
             port: 8080
           initialDelaySeconds: 5
           timeoutSeconds: 5
         readinessProbe:
           httpGet:
-            path: /
+            path: /readyz
             port: 8081
           initialDelaySeconds: 5
           timeoutSeconds: 5

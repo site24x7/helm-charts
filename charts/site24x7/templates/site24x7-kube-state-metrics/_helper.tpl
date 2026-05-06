@@ -12,7 +12,7 @@ site24x7KubeStateMetrics labels
 {{ include "site24x7.labels" . }}
 app.kubernetes.io/instance: {{ include "site24x7KubeStateMetrics.name" . }}
 app.kubernetes.io/component: exporter
-app.kubernetes.io/version: 2.9.2
+app.kubernetes.io/version: 2.17.0
 {{- end }}
 
 {{/*

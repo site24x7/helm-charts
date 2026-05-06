@@ -86,6 +86,89 @@ rules:
   - /livez
   verbs:
   - get
+{{- if .Values.site24x7Agent.leaseAPI.enabled }}
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  resourceNames:
+  - {{ include "site24x7Agent.name" . }}
+  verbs:
+  - list
+  - get
+  - patch
+  - create
+  - watch
+{{- end }}
+{{- if .Values.managementAction }}
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - pods
+  - nodes
+  - namespaces
+  - configmaps
+  - persistentvolumes
+  - persistentvolumeclaims
+  - resourcequotas
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - "apps"
+  resources:
+  - daemonsets
+  - deployments
+  - statefulsets
+  - replicasets
+  - controllerrevisions
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - "batch"
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - "autoscaling"
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

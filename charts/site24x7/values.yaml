@@ -15,6 +15,9 @@ existingSecret:
   name: ""
   key: "KEY"
 
+# managementAction - enable IT Automation ClusterRole rules
+managementAction: false
+
 # clusterName - name of the cluster to be monitored
 clusterName: ""
 
@@ -29,6 +32,11 @@ https_proxy: ""
 site24x7Agent:
   # site24x7Agent.create - enable/disable the site24x7-agent resources
   create: true
+
+  # site24x7Agent.leaseAPI - enable Lease resource and related RBAC
+  leaseAPI:
+    enabled: true
+    leaseDurationSeconds: 50
 
   # site24x7Agent.annotations - for site24x7-agent daemonset and its pod annotations
   annotations: {}
@@ -60,11 +68,13 @@ site24x7Agent:
     name: docker-agent
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: release22000
+    tag: release22100
     imagePullSecrets: []
 
   # site24x7Agent.resources - site24x7-agent daemonset container resources
   resources:
+    requests:
+      memory: 100Mi
     limits:
       memory: 1Gi
 
@@ -112,7 +122,7 @@ site24x7KubeStateMetrics:
     name: kube-state-metrics/kube-state-metrics
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: v2.9.2
+    tag: v2.17.0
     imagePullSecrets: []
   
   # site24x7KubeStateMetrics.resources - container resources
