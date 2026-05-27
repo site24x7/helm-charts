@@ -6,9 +6,11 @@ metadata:
   labels:
     {{- include "site24x7Agent.labels" . | nindent 4 }}
 spec:
-  holderIdentity: {{ printf "%s-pod" (include "site24x7Agent.name" .) | quote }}
   leaseDurationSeconds: {{ .Values.site24x7Agent.leaseAPI.leaseDurationSeconds }}
+  {{- if .Release.IsInstall }}
+  holderIdentity: {{ printf "%s-pod" (include "site24x7Agent.name" .) | quote }}
   leaseTransitions: 0
   acquireTime: {{ now | date "2006-01-02T15:04:05.000000Z" | quote }}
   renewTime: {{ now | date "2006-01-02T15:04:05.000000Z" | quote }}
+  {{- end }}
 {{- end }}
