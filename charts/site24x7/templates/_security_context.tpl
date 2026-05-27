@@ -11,6 +11,9 @@ runAsUser: 1001010001
 {{- end }}
 
 {{- define "site24x7.rootScc" }}
+{{- if .Values.openShift }}
+privileged: true
+{{- end }}
 runAsUser: 0
 readOnlyRootFilesystem: false
 {{- end }}
