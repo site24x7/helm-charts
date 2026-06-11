@@ -74,6 +74,8 @@ spec:
               {{- end }}
           - name: installer
             value: {{ .Values.site24x7Agent.installerName | default "kubernetes" }}
+          - name: INSTALLER
+            value: {{ .Values.site24x7Agent.installerName | default "kubernetes" }}
           - name: NODE_IP
             valueFrom:
               fieldRef:
