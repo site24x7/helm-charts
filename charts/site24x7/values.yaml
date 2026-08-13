@@ -18,6 +18,9 @@ existingSecret:
 # managementAction - enable IT Automation ClusterRole rules
 managementAction: false
 
+# gpuMonitoring - enable GPU monitoring environment variables for the Site24x7 agent
+gpuMonitoring: false
+
 # clusterName - name of the cluster to be monitored
 clusterName: ""
 

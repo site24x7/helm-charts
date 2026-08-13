@@ -76,6 +76,12 @@ spec:
             value: {{ .Values.site24x7Agent.installerName | default "kubernetes" }}
           - name: INSTALLER
             value: {{ .Values.site24x7Agent.installerName | default "kubernetes" }}
+          {{- if .Values.gpuMonitoring }}
+          - name: NVIDIA_VISIBLE_DEVICES
+            value: all
+          - name: NVIDIA_DRIVER_CAPABILITIES
+            value: utility
+          {{- end }}
           - name: NODE_IP
             valueFrom:
               fieldRef:
