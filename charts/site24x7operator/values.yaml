@@ -1,0 +1,67 @@
+namespace: "site24x7"
+
+serviceAccount:
+  annotations: {}
+  name: "site24x7-operator"
+
+clusterRole:
+  name: "site24x7-operator"
+
+clusterRoleBinding:
+  name: "site24x7-operator"
+  serviceAcct: "site24x7-operator"
+  clusterRole: "site24x7-operator"
+
+openshift: false
+
+gkeAutoPilot: false
+
+operator:
+  name: "site24x7-operator"
+  replicas: 1
+  updateStrategy:
+    type: "RollingUpdate"
+  serviceAcctName: "site24x7-operator"
+  annotations: {}
+  applyPriorityClass: true
+  priorityClassValue: 12000000
+  applyDefaultTolerations: true
+  tolerations: []
+  operatorContainer:
+    name:
+      "site24x7-operator"
+    imageRef:
+      repository: site24x7/site24x7-operator
+      # This sets the pull policy for images.
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "v1.0.0"
+      imagePullSecrets: []
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1001010001
+    ports:
+      tlsPortNum: 9443
+      metricsPortNum: 80
+    resources:
+      requests:
+        cpu: 100m
+        memory: 50Mi
+      limits:
+        cpu: 300m
+        memory: 150Mi
+
+operatorService:
+  name: "site24x7-operator"
+  ports:
+    appnPort:
+      portNum: 443
+    metricsPort:
+      portNum: 80

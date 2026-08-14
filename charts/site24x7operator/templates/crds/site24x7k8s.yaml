@@ -1,0 +1,547 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+  name: site24x7k8s.site24x7.com
+spec:
+  group: site24x7.com
+  names:
+    kind: Site24x7K8s
+    listKind: Site24x7K8sList
+    plural: site24x7k8s
+    singular: site24x7k8s
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: Site24x7K8s is the Schema for the site24x7k8s API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: Site24x7K8sSpec defines the desired state of Site24x7K8s
+            properties:
+              infrastructure:
+                properties:
+                  API_SERVER_ENDPOINT_URL:
+                    type: string
+                  KUBE_API_SERVER:
+                    type: string
+                  KUBE_STATE_METRICS_URL:
+                    type: string
+                  nameOverride:
+                    type: string
+                  fullnameOverride:
+                    type: string
+                  deviceKey:
+                    type: string
+                  managementAction:
+                    type: boolean
+                  clusterName:
+                    type: string
+                  site24x7Agent:
+                    type: object
+                    properties:
+                      create:
+                        type: boolean
+                      leaseAPI:
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                          leaseDurationSeconds:
+                            type: integer
+                      annotations:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      updateStrategy:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          rollingUpdate:
+                            type: object
+                            properties:
+                              maxUnavailable:
+                                type: string
+                      nodeSelector:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      imagePullSecrets:
+                        type: array
+                        items:
+                          type: string
+                      site24x7AgentContainer:
+                        type: object
+                        properties:
+                          image:
+                            type: object
+                            properties:
+                              repository:
+                                type: string
+                              name:
+                                type: string
+                              pullPolicy:
+                                type: string
+                              tag:
+                                type: string
+                          securityContext:
+                            type: object
+                            additionalProperties:
+                              type: string
+                          applyNonRootSecurityContext:
+                            type: boolean
+                          resources:
+                            type: object
+                            additionalProperties:
+                              type: object
+                              additionalProperties:
+                                type: string
+                          installerName:
+                            type: string
+                          extraEnv:
+                            type: array
+                            items:
+                              type: object
+                              x-kubernetes-preserve-unknown-fields: true
+                      autoProfilerContainer:
+                        type: object
+                        properties:
+                          image:
+                            type: object
+                            properties:
+                              repository:
+                                type: string
+                              name:
+                                type: string
+                              pullPolicy:
+                                type: string
+                              tag:
+                                type: string
+                          resources:
+                            type: object
+                            additionalProperties:
+                              type: object
+                              additionalProperties:
+                                type: string
+                          installerName:
+                            type: string
+                          extraEnv:
+                            type: array
+                            items:
+                              type: object
+                              x-kubernetes-preserve-unknown-fields: true
+                  site24x7KubeStateMetrics:
+                    type: object
+                    properties:
+                      create:
+                        type: boolean
+                      annotations:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      updateStrategy:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          rollingUpdate:
+                            type: object
+                            properties:
+                              maxUnavailable:
+                                type: string
+                      nodeSelector:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      securityContext:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      replicas:
+                        type: integer
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                      resources:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          additionalProperties:
+                            type: string
+                  site24x7ClusterAgent:
+                    type: object
+                    properties:
+                      create:
+                        type: boolean
+                      replicas:
+                        type: integer
+                      annotations:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      updateStrategy:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          rollingUpdate:
+                            type: object
+                            properties:
+                              maxUnavailable:
+                                type: string
+                      nodeSelector:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      securityContext:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          tag:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                      resources:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          additionalProperties:
+                            type: string
+                      extraEnv:
+                        type: array
+                        items:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      livenessProbe:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      readinessProbe:
+                        type: object
+                        additionalProperties:
+                          type: string
+                  serviceAccount:
+                    type: object
+                    properties:
+                      create:
+                        type: boolean
+                      annotations:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      name:
+                        type: string
+                  site24x7ConfigMap:
+                    type: object
+                    properties:
+                      create:
+                        type: boolean
+                      nodeAgentVersion:
+                        type: string
+                      clusterAgentVersion:
+                        type: string
+                      oneMin:
+                        type: object
+                        properties:
+                          Pods:
+                            type: string
+                          Nodes:
+                            type: string
+                          Namespaces:
+                            type: string
+                          HorizontalPodAutoscalers:
+                            type: string
+                          DaemonSets:
+                            type: string
+                          Deployments:
+                            type: string
+                          Endpoints:
+                            type: string
+                          ReplicaSets:
+                            type: string
+                          StatefulSets:
+                            type: string
+                          Services:
+                            type: string
+                          PV:
+                            type: string
+                          PersistentVolumeClaims:
+                            type: string
+                          Jobs:
+                            type: string
+                          Ingresses:
+                            type: string
+                      settings:
+                        type: object
+                        additionalProperties:
+                          type: string
+                type: object
+              apm:
+                properties:
+                  webhook:
+                    type: object
+                    properties:
+                      monitorAllNamespaces:
+                        type: boolean
+                      includeNamespaces:
+                        type: array
+                        items:
+                          type: string
+                      excludeNamespaces:
+                        type: array
+                        items:
+                          type: string
+                  monitorAllPods:
+                    description: Monitor all pods in the cluster for APM.
+                    type: boolean
+                  includeAppLabels:
+                    description: Include the application labels per namespace to be monitored by APM.
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: object
+                        additionalProperties:
+                          type: string
+                  excludeAppLabels:
+                    description: Exclude the application labels per namespace to be monitored by APM.
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: object
+                        additionalProperties:
+                          type: string
+                  java:
+                    type: object
+                    properties:
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                  python:
+                    type: object
+                    properties:
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                  nodeJS:
+                    type: object
+                    properties:
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                  dotNet:
+                    type: object
+                    properties:
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                  ebpf:
+                    type: object
+                    properties:
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                  dataExporter:
+                    type: object
+                    properties:
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                      deploymentStrategy:
+                        type: string
+                      nodeSelector:
+                        type: object
+                        additionalProperties:
+                          type: string
+                      extraEnv:
+                        type: array
+                        items:
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                  agentsImagePullSecrets:
+                    type: array
+                    items:
+                      type: string
+                type: object
+              proxy:
+                properties:
+                  http_proxy:
+                    type: string
+                  https_proxy:
+                    type: string
+                type: object
+              tolerations:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+              applyDefaultTolerations:
+                type: boolean
+              resource_base_name:
+                type: string
+              openShift:
+                type: boolean
+              gkeAutoPilot:
+                type: boolean
+              applyPriorityClass:
+                type: boolean
+              priorityClassValue:
+                type: integer
+              nodeSelector:
+                type: object
+                additionalProperties:
+                  type: string
+              installationType:
+                description: describes the monitoring type and the metrics need to be collected
+                type: object
+                properties:
+                  agentType:
+                    type: string
+                  customOptions:
+                    type: object
+                    properties:
+                      server:
+                        type: boolean
+                      applications:
+                        type: boolean
+                      applogs:
+                        type: boolean
+                      plugins:
+                        type: boolean
+                      automation:
+                        type: boolean
+                      apmInsight:
+                        type: boolean
+                      process:
+                        type: boolean
+                      resourceChecks:
+                        type: boolean
+            type: object
+          status:
+            description: Site24x7K8sStatus defines the observed state of Site24x7K8s
+            type: object
+            properties:
+              ObservedGeneration:
+                type: integer
+                format: int64
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
