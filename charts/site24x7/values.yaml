@@ -18,6 +18,9 @@ existingSecret:
 # managementAction - enable IT Automation ClusterRole rules
 managementAction: false
 
+# gpuMonitoring - enable GPU monitoring environment variables for the Site24x7 agent
+gpuMonitoring: false
+
 # clusterName - name of the cluster to be monitored
 clusterName: ""
 
@@ -56,6 +59,9 @@ site24x7Agent:
   # site24x7Agent.securityContext to be applied to the daemonset containers
   securityContext: {}
 
+  # site24x7Agent.hostPID - enable host PID namespace sharing for daemonset pods
+  hostPID: false
+
   # site24x7Agent.applyNonRootSecurityContext - if not securityContext is provided, the appropriate context to be added to the daemonset containers based runAsNonRoot: true/false
   applyNonRootSecurityContext: false
 
@@ -68,7 +74,7 @@ site24x7Agent:
     name: docker-agent
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: release22200
+    tag: release22300
     imagePullSecrets: []
 
   # site24x7Agent.resources - site24x7-agent daemonset container resources

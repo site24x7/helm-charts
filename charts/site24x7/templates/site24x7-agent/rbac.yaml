@@ -21,7 +21,8 @@ rules:
   - endpoints
   - componentstatuses
   - events
-  verbs: ["list", "watch"]
+  - serviceaccounts
+  verbs: ["list", "watch", "get"]
 - apiGroups: [""]
   resources:
   - configmaps
@@ -58,7 +59,28 @@ rules:
 - apiGroups: ["policy"]
   resources:
   - poddisruptionbudgets
-  verbs: ["list", "watch"]
+  verbs: ["list", "watch", "get"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources:
+  - roles
+  - clusterroles
+  - clusterrolebindings
+  - rolebindings
+  verbs: ["list", "get"]
+- apiGroups: ["networking.k8s.io"]
+  resources:
+  - networkpolicies
+  verbs: ["list", "get"]
+- apiGroups: ["storage.k8s.io"]
+  resources:
+  - storageclasses
+  - volumeattachments
+  - csidrivers
+  verbs: ["list", "get"]
+- apiGroups: ["scheduling.k8s.io"]
+  resources:
+  - priorityclasses
+  verbs: ["list", "get"]
 - apiGroups: ["certificates.k8s.io"]
   resources:
   - certificatesigningrequests
@@ -194,7 +216,7 @@ subjects:
   name: {{ include "site24x7.fullname" . }}
   namespace: {{ .Release.Namespace }}
 ---
-{{- if .Values.serviceAccount.create -}}
+{{- if .Values.serviceAccount.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
