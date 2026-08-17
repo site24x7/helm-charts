@@ -30,6 +30,7 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ include "site24x7.fullname" . }}          
+      hostPID: {{ .Values.site24x7Agent.hostPID }}
       nodeSelector:
         {{- if not (empty .Values.site24x7Agent.nodeSelector) }}
         {{- .Values.site24x7Agent.nodeSelector }}

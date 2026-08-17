@@ -59,6 +59,9 @@ site24x7Agent:
   # site24x7Agent.securityContext to be applied to the daemonset containers
   securityContext: {}
 
+  # site24x7Agent.hostPID - enable host PID namespace sharing for daemonset pods
+  hostPID: false
+
   # site24x7Agent.applyNonRootSecurityContext - if not securityContext is provided, the appropriate context to be added to the daemonset containers based runAsNonRoot: true/false
   applyNonRootSecurityContext: false
 
