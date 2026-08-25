@@ -64,6 +64,16 @@ entries:
   site24x7-operator:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-08-25T13:04:37.853872448Z"
+    description: A Helm chart for Site24x7 Kubernetes Operator
+    digest: ee0c2674096284de9e36a1907dfd4974623a3881130cd22d6f8d429316d1a2ae
+    name: site24x7-operator
+    type: application
+    urls:
+    - site24x7-operator-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-08-25T06:30:57.382762392Z"
     description: A Helm chart for Site24x7 Kubernetes Operator
     digest: ba5067f2d41f69b0cc28abd01ba17bc238b4caffe07fa9f3d6676cb2dca66de9
@@ -226,4 +236,4 @@ entries:
     urls:
     - https://github.com/site24x7/helm-charts/releases/download/site24x7agent-1.0.0/site24x7agent-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-25T06:30:57.382814779Z"
+generated: "2026-08-25T13:04:37.853919318Z"
