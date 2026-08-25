@@ -1,0 +1,7 @@
+{{- if .Values.operator.applyPriorityClass }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ .Values.operator.name }}
+value: {{ .Values.operator.priorityClassValue }}
+{{- end }}

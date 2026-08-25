@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.operator.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: site24x7-operator
+spec:
+  replicas: {{ .Values.operator.replicas }}
+  selector:
+    matchLabels:
+      app: site24x7-operator
+  strategy:
+    type: {{ .Values.operator.updateStrategy.type }}
+  template:
+    metadata:
+      labels:
+        app: site24x7-operator
+      {{- if .Values.operator.annotations }}
+      annotations:
+        {{- toYaml .Values.operator.annotations | nindent 4 }}
+      {{- end }}
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      serviceAccountName: {{ .Values.operator.serviceAcctName }}
+      {{- if .Values.operator.operatorContainer.imageRef.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.operator.operatorContainer.imageRef.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      tolerations:
+      {{- if .Values.operator.tolerations }}
+        {{- toYaml .Values.operator.tolerations | nindent 8 }}
+      {{- else if .Values.operator.applyDefaultTolerations }}
+        - operator: Exists
+      {{- end }}
+      {{- if .Values.operator.applyPriorityClass }}
+      priorityClassName: {{ .Values.operator.name }}
+      {{- end }}
+      containers:
+      - name: {{ .Values.operator.operatorContainer.name }}
+        image: {{ printf "%s:%s" .Values.operator.operatorContainer.imageRef.repository .Values.operator.operatorContainer.imageRef.tag }}
+        args:
+          - operator
+          - {{ printf "namespace=%s" .Values.namespace }}
+        securityContext:
+          {{- toYaml .Values.operator.operatorContainer.securityContext | nindent 10 }}
+        # IfNotPresent
+        imagePullPolicy: {{ .Values.operator.operatorContainer.imageRef.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.operator.operatorContainer.ports.tlsPortNum }}
+          name: tls
+        - containerPort: {{ .Values.operator.operatorContainer.ports.metricsPortNum }}
+          name: metrics
+        resources:
+          {{- toYaml .Values.operator.operatorContainer.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        volumeMounts:
+        - name: webhook-certs
+          mountPath: /etc/webhook
+      volumes:
+      - name: webhook-certs
+        emptyDir: {}  
+          

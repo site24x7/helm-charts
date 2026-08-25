@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.operatorService.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: site24x7-operator
+  ports:
+    - port: {{ .Values.operatorService.ports.appnPort.portNum }}
+      targetPort: tls
+      name: application
+    - port: {{ .Values.operatorService.ports.metricsPort.portNum }}
+      targetPort: metrics
+      name: metrics
