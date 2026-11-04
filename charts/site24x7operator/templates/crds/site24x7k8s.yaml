@@ -3,6 +3,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.14.0
+    site24x7.com/site24x7k8s-crd-version: "1.1.0"
+    site24x7.com/site24x7-operator-version: "1.1.0"
+    site24x7.com/apminsight-autoprofiler-version: "1.4.3"
   name: site24x7k8s.site24x7.com
 spec:
   group: site24x7.com
@@ -325,6 +328,67 @@ spec:
                 type: object
               apm:
                 properties:
+                  preloader:
+                    type: object
+                    properties:
+                      logs:
+                        type: object
+                        properties:
+                          logToStdout:
+                            type: string
+                          logToFile:
+                            type: string
+                  processMonitoringProfile:
+                    type: object
+                    properties:
+                      rulesSyncMode:
+                        type: string # replace | append
+                      processDiscoveryInterval:
+                        type: integer
+                      processMonitoringRules:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            processMonitoringRuleName:
+                              type: string
+                            customApplicationName:
+                              type: string
+                            ebpfEnabled:
+                              type: boolean
+                            processMonitoringStatus:
+                              type: string
+                            processMonitoringConditions:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  monitoringConditionOperator:
+                                    type: string
+                                  monitoringConditionParameter:
+                                    type: string
+                                  monitoringConditionParameterValue:
+                                    type: string
+                      processDetectionRules:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            processDetectionRuleName:
+                              type: string
+                            processTechnology:
+                              type: string
+                            processDetectionConditions:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  detectionConditionOperator:
+                                    type: string
+                                  detectionConditionParameter:
+                                    type: string
+                                  detectionConditionParameterValue:
+                                    type: string
                   webhook:
                     type: object
                     properties:
@@ -473,6 +537,12 @@ spec:
                         type: object
                         additionalProperties:
                           type: string
+                      resources:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          additionalProperties:
+                            type: string
                       extraEnv:
                         type: array
                         items:
@@ -482,6 +552,51 @@ spec:
                     type: array
                     items:
                       type: string
+                type: object
+              csi:
+                properties:
+                  csiProvisioner:
+                    properties:
+                      resources:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          additionalProperties:
+                            type: string
+                    type: object
+                  csiNodeServer:
+                    properties:
+                      resources:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          additionalProperties:
+                            type: string
+                    type: object
+                  csiRegistrar:
+                    properties:
+                      image:
+                        type: object
+                        properties:
+                          repository:
+                            type: string
+                          name:
+                            type: string
+                          pullPolicy:
+                            type: string
+                          tag:
+                            type: string
+                          imagePullSecrets:
+                            type: array
+                            items:
+                              type: string
+                      resources:
+                        type: object
+                        additionalProperties:
+                          type: object
+                          additionalProperties:
+                            type: string
+                    type: object
                 type: object
               proxy:
                 properties:
