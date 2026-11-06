@@ -8,7 +8,12 @@ Helm chart for the **Site24x7 Kubernetes Operator** — automates the deployment
 - Helm 3.0+
 - Cluster-admin privileges (required to install CRDs, ClusterRole, and ClusterRoleBinding)
 
-## Installation
+## Site24x7 Operator Installation
+
+Create the site24x7 namespace and secret generic key
+```bash
+kubectl create namespace site24x7 && kubectl create secret generic site24x7-agent --namespace site24x7 --from-literal=s247_device_key=<Site24x7LicenseKey>
+```
 
 Add Site24x7 repo
 
@@ -21,7 +26,12 @@ helm repo update
 Install SIte24x7 Operator
 
 ```bash
-helm install site24x7-operator site24x7/site24x7operator
+helm install site24x7-operator-release site24x7/site24x7-operator
+```
+
+Apply site24x7k8s custom resource configuration
+```bash
+kubectl apply -f site24x7k8s_resource.yaml
 ```
 
 ## Configuration
@@ -43,16 +53,17 @@ Key values that can be overridden:
 Override values at install time using `--set` or a custom values file:
 
 ```bash
-helm install site24x7-operator site24x7/site24x7operator \
-  --namespace site24x7 \
-  --set operator.operatorContainer.imageRef.tag=v1.1.0 \
+helm install site24x7-operator-release site24x7/site24x7-operator \
+  --set operator.operatorContainer.imageRef.tag=1.1.0 \
   --set openshift=true
 ```
 
 ## Uninstallation
 
 ```bash
-helm uninstall site24x7-operator --namespace site24x7
+helm uninstall site24x7-operator
+
+kubectl delete namespace site24x7
 ```
 
 ## Helpful Links
