@@ -1,0 +1,7 @@
+The Site24x7 Kubernetes Operator has been installed.
+
+Check the operator status:
+  kubectl get deployment {{ .Values.operator.name }} --namespace {{ .Values.namespace }}
+
+View the operator logs:
+  kubectl logs --namespace {{ .Values.namespace }} deployment/{{ .Values.operator.name }}
