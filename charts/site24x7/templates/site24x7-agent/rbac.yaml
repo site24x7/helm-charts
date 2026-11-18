@@ -1,4 +1,4 @@
-{{- if .Values.site24x7Agent.create }}
+{{- if or .Values.site24x7Agent.create .Values.site24x7WindowsAgent.create }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -210,10 +210,10 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "site24x7.fullname" . }}
+  name: {{ include "site24x7.serviceAccountName" . }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "site24x7.fullname" . }}
+  name: {{ include "site24x7.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 ---
 {{- if .Values.serviceAccount.create }}

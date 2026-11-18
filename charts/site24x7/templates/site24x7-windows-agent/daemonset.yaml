@@ -1,0 +1,108 @@
+{{- if .Values.site24x7WindowsAgent.create }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "site24x7WindowsAgent.name" . }}
+  labels:
+    {{- include "site24x7WindowsAgent.labels" . | nindent 4 }}
+  {{- with .Values.site24x7WindowsAgent.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "site24x7WindowsAgent.selectorLabels" . | nindent 6 }}
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      name: {{ include "site24x7WindowsAgent.name" . }}
+      labels:
+        {{- include "site24x7WindowsAgent.labels" . | nindent 8 }}
+      {{- with .Values.site24x7WindowsAgent.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "site24x7.serviceAccountName" . }}
+      nodeSelector:
+        {{- toYaml (merge (dict "kubernetes.io/os" "windows") (.Values.site24x7WindowsAgent.nodeSelector | default dict)) | nindent 8 }}
+      {{- if or .Values.site24x7WindowsAgent.tolerations .Values.site24x7WindowsAgent.applyDefaultToleration }}
+      tolerations:
+        {{- if .Values.site24x7WindowsAgent.tolerations }}
+        {{- toYaml .Values.site24x7WindowsAgent.tolerations | nindent 8 }}
+        {{- else }}
+        - operator: Exists
+        {{- end }}
+      {{- end }}
+      {{- with .Values.site24x7WindowsAgent.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.site24x7WindowsAgent.applyPriorityClass }}
+      priorityClassName: {{ include "site24x7WindowsAgent.name" . }}
+      {{- end }}
+      containers:
+        - name: {{ include "site24x7WindowsAgent.name" . }}
+          {{- with .Values.site24x7WindowsAgent.image }}
+          image: {{ .repository }}/{{ .name }}:{{ .tag }}
+          imagePullPolicy: {{ .pullPolicy }}
+          {{- end }}
+          {{- with .Values.site24x7WindowsAgent.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: DEVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.existingSecret.enabled }}
+                  name: {{ .Values.existingSecret.name | quote }}
+                  key: {{ .Values.existingSecret.key | default "KEY" | quote }}
+                  {{- else }}
+                  name: {{ include "site24x7Agent.name" . }}
+                  key: KEY
+                  {{- end }}
+            - name: installer
+              value: {{ .Values.site24x7WindowsAgent.installerName | quote }}
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            {{- with .Values.site24x7WindowsAgent.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.site24x7ConfigMap.create }}
+          volumeMounts:
+            - name: clusterconfig
+              mountPath: /etc/site24x7/clusterconfig
+              readOnly: true
+          {{- end }}
+      {{- if .Values.site24x7ConfigMap.create }}
+      volumes:
+        - name: clusterconfig
+          configMap:
+            name: {{ include "site24x7.fullname" . }}
+            optional: true
+            items:
+              - key: SETTINGS
+                path: SETTINGS
+              - key: 1MIN
+                path: 1MIN
+              - key: logging.xml
+                path: logging.xml
+      {{- end }}
+{{- end }}

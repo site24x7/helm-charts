@@ -25,5 +25,5 @@ site24x7Agent labels
 {{ include "site24x7.labels" . }}
 app.kubernetes.io/instance: {{ include "site24x7Agent.name" . }}
 app.kubernetes.io/component: agent
-app.kubernetes.io/version: 22.3.00
+app.kubernetes.io/version: {{ .Values.site24x7Agent.image.tag | quote }}
 {{- end }}

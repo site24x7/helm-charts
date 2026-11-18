@@ -1,0 +1,9 @@
+{{- if and .Values.site24x7WindowsAgent.create .Values.site24x7WindowsAgent.applyPriorityClass }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ include "site24x7WindowsAgent.name" . }}
+  labels:
+    {{- include "site24x7WindowsAgent.labels" . | nindent 4 }}
+value: {{ .Values.site24x7WindowsAgent.priorityClassValue | int }}
+{{- end }}
