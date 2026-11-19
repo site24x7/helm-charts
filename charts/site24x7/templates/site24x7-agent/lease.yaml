@@ -1,4 +1,4 @@
-{{- if and .Values.site24x7Agent.create .Values.site24x7Agent.leaseAPI.enabled }}
+{{- if and (or .Values.site24x7Agent.create .Values.site24x7WindowsAgent.create) .Values.site24x7Agent.leaseAPI.enabled }}
 apiVersion: coordination.k8s.io/v1
 kind: Lease
 metadata:
@@ -8,9 +8,10 @@ metadata:
 spec:
   leaseDurationSeconds: {{ .Values.site24x7Agent.leaseAPI.leaseDurationSeconds }}
   {{- if .Release.IsInstall }}
+  {{- $now := dateInZone "2006-01-02T15:04:05.000000Z" (now) "UTC" }}
   holderIdentity: {{ printf "%s-pod" (include "site24x7Agent.name" .) | quote }}
   leaseTransitions: 0
-  acquireTime: {{ now | date "2006-01-02T15:04:05.000000Z" | quote }}
-  renewTime: {{ now | date "2006-01-02T15:04:05.000000Z" | quote }}
+  acquireTime: {{ $now | quote }}
+  renewTime: {{ $now | quote }}
   {{- end }}
 {{- end }}

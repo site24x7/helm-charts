@@ -73,8 +73,8 @@ site24x7Agent:
     repository: site24x7
     name: docker-agent
     pullPolicy: Always
-    # Overrides the image tag whose default is the chart appVersion.
-    tag: release22300
+    # Linux image version and app.kubernetes.io/version label, independent of chart appVersion.
+    tag: release22301
     imagePullSecrets: []
 
   # site24x7Agent.resources - site24x7-agent daemonset container resources
@@ -96,6 +96,36 @@ site24x7Agent:
   # site24x7Agent.priorityClassValue - site24x7-agent priorityClass value
   priorityClassValue: 12000000
   
+
+site24x7WindowsAgent:
+  # Enable the Windows DaemonSet, its PriorityClass and the logging.xml ConfigMap entry
+  create: false
+
+  # Windows DaemonSet and pod annotations
+  annotations: {}
+
+  # Additional node labels; kubernetes.io/os: windows is always applied
+  nodeSelector:
+    kubernetes.io/os: windows
+
+  # Explicit tolerations take precedence over applyDefaultToleration
+  tolerations: []
+  applyDefaultToleration: true
+
+  image:
+    repository: site24x7
+    name: windows-docker-agent
+    # Windows image version and app.kubernetes.io/version label, independent of Linux.
+    tag: release22300
+    pullPolicy: Always
+    imagePullSecrets: []
+
+  resources: {}
+  installerName: "kubernetes"
+  extraEnv: []
+  applyPriorityClass: true
+  priorityClassValue: 12000000
+
 
 site24x7KubeStateMetrics:
   # site24x7KubeStateMetrics.create - enable/disable

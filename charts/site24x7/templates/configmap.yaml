@@ -6,6 +6,16 @@ metadata:
   labels:
     {{- include "site24x7.labels" . | nindent 4 }}
 data:
+  {{- if .Values.site24x7WindowsAgent.create }}
+  logging.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <LoggingXml>
+        <LoggingConfig redirectStd="False">
+            <Logger name="DA" fileName="da" parent="true" fileSize="1000000" fileCount="10" level="3"/>
+            <Logger name="KUBERNETES" fileName="kubernetes" parent="true" fileSize="1000000" fileCount="10" level="3"/>
+        </LoggingConfig>
+    </LoggingXml>
+  {{- end }}
   NODE_AGENT_VERSION: "{{ .Values.site24x7ConfigMap.nodeAgentVersion }}"
   CLUSTER_AGENT_VERSION: "{{ .Values.site24x7ConfigMap.clusterAgentVersion }}"
   SETTINGS: |
